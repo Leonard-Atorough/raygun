@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# 🚀 Lumo Mini‑Postman Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight, React‑based API tester that demonstrates a clean separation between UI, domain logic, and networking while keeping the codebase TypeScript‑strict.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✅ Implemented Features (v1.0)
 
-## React Compiler
+| Area | Feature | Brief description |
+|------|---------|-----------|
+| **UI – Simple Request View** | Request builder form | • Method selector (GET | POST | PUT | DELETE | HEAD | OPTIONS)  <br>• URL input (plain text) <br>• Headers textarea (one per line, `Key: Value`) <br>• Query‑string field (key=value&…) <br>• Body editor (raw JSON / text, shown only for methods that support a payload) |
+| **Networking** | `sendRequest` wrapper around **Axios** | • Constructs `AxiosRequestConfig` from a `RequestDTO` <br>• Injects Basic or Bearer authentication <br>• Measures request duration <br>• Normalises response headers via `axiosHeadersToRecord` |
+| **State Management** | React Context (`RequestProvider`) | • Holds the latest `RequestDTO` and `ResponseDTO` <br>• Provides `setRequest` / `setResponse` setters for any component <br>• Simple `useRequest` hook for ergonomic consumption |
+| **Utilities** | • `buildRequestDTO` (pure function) – parses raw header / query strings, merges query params into the final URL, trims whitespace.<br>• `axiosHeadersToRecord` – converts `AxiosResponseHeaders` (or a partial object) into a strict `Record<string, string>` with optional hop‑by‑hop header filtering. |
+| **Developer Experience** | • Strict TypeScript DTOs (`RequestDTO`, `ResponseDTO`). <br>• Vite dev server with a **proxy example** for CORS‑free local testing. <br>• Pure functions are unit‑test ready (easily exercised with Jest/Vitest). |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🌱 Planned / Future Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Category | Feature | Why it matters |
+|----------|---------|----------------|
+| **UI Enhancements** | Tabbed body editor (Raw / Form‑Data / x‑www‑urlencoded) | Mirrors full Postman ergonomics. |
+| | Monaco‑based code editor with syntax highlighting | Better JSON editing experience. |
+| | Dark / Light theme toggle (MUI theming) | Improves accessibility and user preference. |
+| | Request history panel | Quickly re‑run previous calls. |
+| | Environment variables (`{{BASE_URL}}`) | Switch between dev / prod endpoints effortlessly. |
+| **Advanced Auth** | OAuth 2.0 flows (Authorization Code, Client Credentials) | Supports modern APIs. |
+| **Testing & Automation** | Built‑in test runner (JS snippets) | Validate response shape, status, timing. |
+| | Export to cURL / fetch / PowerShell snippets | Easy copy‑paste for docs or CI pipelines. |
+| **Performance** | Request cancellation (AbortController) | Stop long‑running calls. |
+| **Persistence** | Save collections to `localStorage` / IndexedDB | Keep work between sessions. |
+| **Security** | Redact sensitive headers (e.g., `Authorization`) in UI logs | Safer sharing of request snapshots. |
+| **Extensibility** | Plugin system for custom request transformers | Community can add bespoke behaviours. |
+| **Documentation** | OpenAPI import/export | Bootstrap requests from existing specs. |
+| **CI Integration** | CLI wrapper (`lumo-cli`) that runs saved collections | Use Lumo in automated test pipelines. |
+| **Accessibility** | Keyboard‑only navigation, ARIA labels, screen‑reader support | Inclusive UX. |
+| **Internationalisation** | i18n support (i18next) | Reach non‑English users. |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🙋‍♀️ Contributing
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Feel free to open issues or pull requests for any of the items above—or propose brand‑new ideas!  
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+When contributing:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Keep the TypeScript types accurate.  
+2. Follow the existing folder layout (`src/components`, `src/domain`, `src/infrastructure`).  
+3. Add unit tests for any new pure functions.  
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Happy hacking! 🎉
