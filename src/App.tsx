@@ -58,7 +58,7 @@ function App() {
             <Typography variant="h4" component="h1" sx={{ fontWeight: "700" }}>
               Raygun
             </Typography>
-            <Typography> Your handy HTTP Helper</Typography>
+            <Typography> Your Handy HTTP Helper</Typography>
           </Box>
 
           <Box
