@@ -1,4 +1,4 @@
-# 🚀 Lumo Mini‑Postman Clone
+# 🚀 Raygun Mini‑Postman Clone
 
 A lightweight, React‑based API tester that demonstrates a clean separation between UI, domain logic, and networking while keeping the codebase TypeScript‑strict.
 
