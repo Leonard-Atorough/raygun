@@ -1,8 +1,17 @@
 import { useContext, useState } from "react";
 import RequestContext from "../context/RequestContext";
 import { buildRequest } from "../domain/requestBuilder";
-import { Box, Button, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+} from "@mui/material";
 import { sendRequest } from "../infrastructure/httpClient";
+import Editor from "@monaco-editor/react";
 
 export function RequestForm() {
   const [method, setMethod] = useState("GET");
@@ -14,6 +23,8 @@ export function RequestForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const ctx = useContext(RequestContext);
 
@@ -27,6 +38,7 @@ export function RequestForm() {
 
   async function handleSend() {
     console.log("handling send");
+    setLoading(true);
     const requestDto = buildRequest({
       method,
       url,
@@ -43,95 +55,109 @@ export function RequestForm() {
 
     setRequest(requestDto);
 
-    const response = await sendRequest(requestDto);
-
-    setResponse(response);
-    console.log(response);
+    let response;
+    try {
+      response = await sendRequest(requestDto);
+      setResponse(response);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <Box sx={{ display: "grid", gap: 2 }}>
-      <div style={{ display: "flex", gap: "1rem" }}>
-        <Select
-          value={method}
-          onChange={(e) => setMethod(e.target.value)}
-          size="small"
-        >
-          {["GET", "POST", "PUT", "PATCH", "DELETE"].map((m) => (
-            <MenuItem key={m} value={m}>
-              {m}
-            </MenuItem>
-          ))}
-        </Select>
+    <Paper elevation={3} sx={{ p: 3 }}>
+      <Box sx={{ display: "grid", gap: 2 }}>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <Select
+            value={method}
+            onChange={(e) => setMethod(e.target.value)}
+            size="small"
+          >
+            {["GET", "POST", "PUT", "PATCH", "DELETE"].map((m) => (
+              <MenuItem key={m} value={m}>
+                {m}
+              </MenuItem>
+            ))}
+          </Select>
+          <TextField
+            label="URL"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            fullWidth
+          />
+          <Select
+            value={authType}
+            onChange={(e) => setAuthType(e.target.value)}
+          >
+            {["none", "basic", "bearer"].map((item) => (
+              <MenuItem key={item} value={item}>
+                {item}
+              </MenuItem>
+            ))}
+          </Select>
+        </div>
+        {/* headers */}
         <TextField
-          label="URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          fullWidth
-        />
-        <Select value={authType} onChange={(e) => setAuthType(e.target.value)}>
-          {["none", "basic", "bearer"].map((item) => (
-            <MenuItem key={item} value={item}>
-              {item}
-            </MenuItem>
-          ))}
-        </Select>
-      </div>
-      {/* headers */}
-      <TextField
-        label="Headers (one per line - Key:Value)"
-        multiline
-        rows={4}
-        value={rawHeaders}
-        onChange={(e) => setRawHeaders(e.target.value)}
-        fullWidth
-      />
-      {/* query params */}
-      <TextField
-        label="Query string (key=value&key2=value2)"
-        value={rawQuery}
-        onChange={(e) => setRawQuery(e.target.value)}
-        fullWidth
-      />
-      {/* Body */}
-      {["POST", "PUT", "PATCH"].includes(method) && (
-        <TextField
-          label="Body (raw JSON / text)"
+          label="Headers (one per line - Key:Value)"
           multiline
-          rows={6}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
+          rows={4}
+          value={rawHeaders}
+          onChange={(e) => setRawHeaders(e.target.value)}
           fullWidth
         />
-      )}
-
-      {/* Auth section */}
-      {authType === "basic" && (
-        <>
-          <TextField
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            label="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </>
-      )}
-      {authType === "bearer" && (
+        {/* query params */}
         <TextField
-          name="Bearer token"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
+          label="Query string (key=value&key2=value2)"
+          value={rawQuery}
+          onChange={(e) => setRawQuery(e.target.value)}
           fullWidth
         />
-      )}
+        {/* Body */}
+        {["POST", "PUT", "PATCH"].includes(method) && (
+          <Editor
+            height="40vh"
+            value={body}
+            defaultLanguage="javascript"
+            onChange={(value) => setBody(value!)}
+          />
+        )}
 
-      <Button variant="contained" color="primary" onClick={handleSend}>
-        Send
-      </Button>
-    </Box>
+        {/* Auth section */}
+        {authType === "basic" && (
+          <>
+            <TextField
+              label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <TextField
+              label="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </>
+        )}
+        {authType === "bearer" && (
+          <TextField
+            name="Bearer token"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            fullWidth
+          />
+        )}
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSend}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={20} color="inherit" /> : "Send"}
+        </Button>
+      </Box>
+    </Paper>
   );
 }
