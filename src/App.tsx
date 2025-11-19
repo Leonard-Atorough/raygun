@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { RequestForm } from "./components/RequestForm";
 import { ResponseViewer } from "./components/ResponseViewer";
+import { RequestTab } from "./pages/RequestTab";
 
 function App() {
   const theme = createTheme({
@@ -60,19 +61,7 @@ function App() {
             </Typography>
             <Typography> Your Handy HTTP Helper</Typography>
           </Box>
-
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 3,
-              p: { xs: 1, md: 2 },
-            }}
-          >
-            <RequestForm />
-            <ResponseViewer />
-          </Box>
+          <RequestTab />
         </Box>
       </RequestProvider>
     </ThemeProvider>
