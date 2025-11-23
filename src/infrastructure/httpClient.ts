@@ -1,8 +1,4 @@
-import type {
-  AxiosRequestConfig,
-  AxiosResponseHeaders,
-  AxiosHeaders,
-} from "axios";
+import type { AxiosRequestConfig, AxiosResponseHeaders, AxiosHeaders } from "axios";
 import type { RequestDTO } from "../dto/request.dto";
 import type { ResponseDTO } from "../dto/response.dto";
 import axios from "axios";
@@ -16,6 +12,7 @@ export async function sendRequest(req: RequestDTO): Promise<ResponseDTO> {
     headers: req.headers,
     data: req.body ? JSON.parse(req.body) : undefined,
     timeout: 30000,
+    withCredentials: true,
   };
 
   //Basic/Bearer auth convenience
